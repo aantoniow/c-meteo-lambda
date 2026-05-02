@@ -1,3 +1,3 @@
-package main.java.com.aantoniow.handler;
+package com.aantoniow.handler;
 
 class WeatherHandler {}

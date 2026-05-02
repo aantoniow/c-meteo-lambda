@@ -1,3 +1,3 @@
-package main.java.com.aantoniow.model;
+package com.aantoniow.model;
 
 class WeatherResponse {}

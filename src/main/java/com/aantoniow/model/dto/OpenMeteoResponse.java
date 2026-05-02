@@ -1,3 +1,3 @@
-package main.java.com.aantoniow.model.dto;
+package com.aantoniow.model.dto;
 
 class OpenMeteoResponse {}
