@@ -1,9 +1,14 @@
 # c-meteo-lambda
 This project is being done for recruitment purposes.
+This README.md file is being treated as self documentation.
 
 I'll mainly use java, since I have the most experience with it, despite knowing that in "AWS Lambda" environment it probably doesn't have the best performance (cold start).
 
 I won't be using Spring-Boot, beacuse it would further complicate generated jar and reduce performance, but in pure REST Api model, or some platform easy to get logs from - I would definitively add it.
+
+I've decided to use open-meteo geolocation api, since it was presented almost at the top of documentation and it doesn't really complicates that much.
+It will be included inside Open-Meteo client, but I've considered that it maybe should behave separately - since a lot of other weather apis use latitude and
+longitude as their input mechanism.
 
 ## Attention!
 In prototype that I'm currently working on, my code won't be executed asynchronously.
