@@ -1,53 +1,76 @@
 package com.aantoniow.client;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
-import tools.jackson.databind.ObjectMapper;
+import com.aantoniow.client.service.HttpService;
+import com.aantoniow.model.dto.Coordinates;
+import com.aantoniow.model.dto.GeocodingResponse;
+import com.aantoniow.model.dto.GeocodingResults;
+import com.aantoniow.model.dto.OpenMeteoResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-class OpenMeteoClient implements WeatherClient {
-    private final String openMeteoUrl = "https://api.open-meteo.com/v1/forecast?current=temperature_2m&latitude=51.1&longitude=17.0333";
-    private final String geoCodingUrl = "https://geocoding-api.open-meteo.com/v1/search?name={city}&count=1&format=json";
+public class OpenMeteoClient implements WeatherClient {
+    private final String FORECAST_URL = "https://api.open-meteo.com/v1/forecast?current=temperature_2m&latitude=%s&longitude=%s";
+    private final String GEOCODING_URL = "https://geocoding-api.open-meteo.com/v1/search?name=%s&count=1&format=json";
 
-    private final HttpClient httpClient;
+    private final HttpService httpService;
     private final ObjectMapper objectMapper;
 
-    public OpenMeteoClient(HttpClient httpClient, ObjectMapper objectMapper) {
-        this.httpClient = httpClient;
+    public OpenMeteoClient(HttpService httpService, ObjectMapper objectMapper) {
+        this.httpService = httpService;
         this.objectMapper = objectMapper;
     }
 
     @Override
-    public double getCurrentTemperature(String city) throws Exception {
-        // TODO Auto-generated method stub
-        return 0;
+    public Double getCurrentTemperature(String city) throws Exception {
+        Coordinates coords = getCoordinates(city);
+        return getTemperature(coords);
     }
 
-    private Coordinates getCoordinates() {
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(geoCodingUrl))
-                .timeout(Duration.ofSeconds(10))
-                .GET()
-                .build();
-
+    private Coordinates getCoordinates(String city) {
+        String url = String.format(
+                GEOCODING_URL,
+                URLEncoder.encode(city, StandardCharsets.UTF_8));
         try {
-            HttpResponse response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+            GeocodingResponse formattedResponseList = objectMapper.readValue(httpService.get(url),
+                    GeocodingResponse.class);
+            if (formattedResponseList.getResults() == null || formattedResponseList.getResults().isEmpty()) {
+                throw new WeatherClientException("City not found");
+            }
+            GeocodingResults result = formattedResponseList.getResults().get(0);
+            return new Coordinates(result.getLatitude(), result.getLongitude());
 
-        return new Coordinates("test", "dupa");
+        } catch (JsonMappingException e) {
+            throw new WeatherClientException("City parsing problem", e);
+        } catch (JsonProcessingException e) {
+            throw new WeatherClientException("City parsing problem", e);
+        }
     }
 
-    private record Coordinates(String longitude, String latitude) {
-    };
+    private Double getTemperature(Coordinates coords) {
+        String url = String.format(
+                Locale.US,
+                FORECAST_URL,
+                coords.latitude(),
+                coords.longitude());
+
+        OpenMeteoResponse meteo;
+        try {
+            meteo = objectMapper.readValue(httpService.get(url), OpenMeteoResponse.class);
+            if (meteo.getCurrent() == null) {
+                throw new WeatherClientException("Temperature not found");
+            }
+
+            return meteo.getCurrent().getTemperature();
+        } catch (JsonMappingException e) {
+            throw new WeatherClientException("Temperature parsing problem", e);
+        } catch (JsonProcessingException e) {
+            throw new WeatherClientException("Temperature parsing problem", e);
+        }
+    }
 
 }

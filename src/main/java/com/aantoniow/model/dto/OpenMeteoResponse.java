@@ -1,3 +1,10 @@
 package com.aantoniow.model.dto;
 
-class OpenMeteoResponse {}
+public class OpenMeteoResponse {
+    CurrentTemperature current;
+
+    public CurrentTemperature getCurrent() {
+        return current;
+    }
+
+}

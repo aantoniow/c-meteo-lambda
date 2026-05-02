@@ -1,18 +1,36 @@
 # c-meteo-lambda
 This project is being done for recruitment purposes.
-This README.md file is being treated as self documentation.
+This README.md file is being treated as my informal thoughts and some documentation.
 
+
+## General information
 I'll mainly use java, since I have the most experience with it, despite knowing that in "AWS Lambda" environment it probably doesn't have the best performance (cold start).
 
 I won't be using Spring-Boot, beacuse it would further complicate generated jar and reduce performance, but in pure REST Api model, or some platform easy to get logs from - I would definitively add it.
 
-I've decided to use open-meteo geolocation api, since it was presented almost at the top of documentation and it doesn't really complicates that much.
-It will be included inside Open-Meteo client, but I've considered that it maybe should behave separately - since a lot of other weather apis use latitude and
-longitude as their input mechanism.
+I approach this project having in mind all specified Tasks in mind, to reduct time needed for refactoring with each next task.
+
+### Open-Meteo Client
+I've implemented this client having in mind that Task #2, needs cities as input parameter and Task #4, suggests usage of other weather providers.
+To do City-Latitude/Longitude conversion, I've decided to use open-meteo geolocation api, since it was presented almost at the top of documentation 
+(at https://open-meteo.com/en/docs/geocoding-api?name=&count=1#geocoding_search) and it doesn't really complicates that much I think. And will be calling this feature "Geocoding" from now on.
+
+For purpose of this project, Geocoding was included inside Open-Meteo client, but I've considered that it maybe should behave separately - since a lot of other weather APIs use latitude and longitude as their input mechanism. Also results from this client never change actually, so caching mechanism inside would provide very useful.
+
+I started writing this class with using HttpClient, which is provided by java standard library. But having in mind Task #4 and interface of WeatherClient, it
+was fitting that I would extract http calls to separate service, which helps in keeping single responsibility in order. Also it should simplify unit testing.
+
+### AppConfig
+This class is for configuration of httpClient and objectMapper.
+ObjectMapper is a class and a core component of Jackson library, which I've included inside this application. I configured it here, so no unmapped fields won't
+cause exceptions.
+HttpClient is configured having in mind short TTL, time to live has duration of couple seconds to not lock application on some networking problem. (Application
+in current state is making synchronous http calls, TTL is crucial)
 
 ## Attention!
-In prototype that I'm currently working on, my code won't be executed asynchronously.
-I'm using jackson version 2.X, with known CVE problem but since this code works as homework it should be sufficient.
+- In prototype that I'm currently working on, my code won't be executed asynchronously!
+
+- I'm using jackson version 2.X, with known CVE problem but since this code works as homework it should be sufficient.
 
 ### Open-Meteo
-It's using parameter, "current=temperature_2m", as it is mentioned in documentation to return only current weather information, temperature_2m means "Air temperature at 2 meters above ground"
+It's using parameter, "current=temperature_2m", as it is mentioned in documentation to return only current weather information, "temperature_2m" means "Air temperature at 2 meters above ground" (at https://open-meteo.com/en/docs?latitude=51.1&longitude=17.0333&forecast_days=1&current=temperature_2m#location_and_time)

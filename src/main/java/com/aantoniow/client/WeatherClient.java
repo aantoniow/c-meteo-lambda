@@ -1,5 +1,5 @@
 package com.aantoniow.client;
 
-interface WeatherClient {
-    double getCurrentTemperature(String city) throws Exception;
+public interface WeatherClient {
+    Double getCurrentTemperature(String city) throws Exception;
 }

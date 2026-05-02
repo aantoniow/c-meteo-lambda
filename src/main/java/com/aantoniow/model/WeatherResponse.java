@@ -1,3 +1,6 @@
 package com.aantoniow.model;
 
-class WeatherResponse {}
+public class WeatherResponse {
+    String category;
+    Double temperature;
+}
