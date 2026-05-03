@@ -1,6 +1,20 @@
 package com.aantoniow.model;
 
 public class WeatherResponse {
+    double temperature;
     String category;
-    Double temperature;
+
+    public WeatherResponse(double temperature, String category) {
+        this.temperature = temperature;
+        this.category = category;
+    }
+
+    public double getTemperature() {
+        return temperature;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
 }

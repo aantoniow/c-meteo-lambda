@@ -34,7 +34,7 @@ class OpenMeteoClientTest {
               "results": [
                 {
                   "id": 3081368,
-                  "name": "Wroclaw",
+                  "name": "Wrocław",
                   "latitude": 51.1,
                   "longitude": 17.03333,
                   "elevation": 119.0,
@@ -94,7 +94,7 @@ class OpenMeteoClientTest {
     @Test
     void shouldGetTemperatureFromValidCity() {
         // given
-        String city = "Wroclaw";
+        String city = "Wrocław";
         when(httpService.get(contains("geocoding"))).thenReturn(GEOCODING_VALID);
         when(httpService.get(contains("forecast"))).thenReturn(TEMPERATURE_VALID);
 
@@ -108,7 +108,7 @@ class OpenMeteoClientTest {
     @Test
     void shouldThrowWhenTemperatureInvalid() {
         // given
-        String city = "Wroclaw";
+        String city = "Wrocław";
         when(httpService.get(contains("geocoding"))).thenReturn(GEOCODING_VALID);
         when(httpService.get(contains("forecast"))).thenReturn(TEMPERATURE_INVALID);
 
@@ -119,7 +119,7 @@ class OpenMeteoClientTest {
     @Test
     void shouldThrowWhenCoordinatesInvalid() {
         // given
-        String city = "Wroclaw";
+        String city = "Wrocław";
         when(httpService.get(contains("geocoding"))).thenReturn(GEOCODING_INVALID);
 
         // when / then
@@ -129,7 +129,7 @@ class OpenMeteoClientTest {
     @Test
     void shouldThrowWhenHttpServiceThrows() {
         // given
-        String city = "Wroclaw";
+        String city = "Wrocław";
         when(httpService.get(anyString())).thenThrow(new HttpException("timeout"));
 
         // when / then

@@ -1,6 +1,8 @@
 package com.aantoniow.service;
 
 import com.aantoniow.client.WeatherClient;
+import com.aantoniow.model.WeatherRequest;
+import com.aantoniow.model.WeatherResponse;
 
 public class WeatherService {
 
@@ -10,12 +12,26 @@ public class WeatherService {
         this.weatherClient = weatherClient;
     }
 
-    public void costam(String city) {
-        try {
-            Double temp = weatherClient.getCurrentTemperature(city);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public WeatherResponse getTemperatureAndCategorise(WeatherRequest request) {
+        if (request.getCity() == null || request.getCity().isBlank()) {
+            throw new WeatherServiceException("No valid city provided!");
         }
-
+        String city = request.getCity();
+        double temp = weatherClient.getCurrentTemperature(city);
+        String category = categoriseTemp(temp);
+        return new WeatherResponse(temp, category);
     }
+
+    private String categoriseTemp(double temp) {
+        if (temp <= 0)
+            return "Freezing";
+        if (temp <= 10)
+            return "Cold";
+        if (temp <= 20)
+            return "Mild";
+        if (temp <= 30)
+            return "Warm";
+        return "Hot";
+    }
+
 }

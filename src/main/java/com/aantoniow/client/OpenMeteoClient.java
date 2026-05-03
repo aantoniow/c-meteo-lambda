@@ -26,7 +26,7 @@ public class OpenMeteoClient implements WeatherClient {
     }
 
     @Override
-    public Double getCurrentTemperature(String city) {
+    public double getCurrentTemperature(String city) {
         Coordinates coords = getCoordinates(city);
         return getTemperature(coords);
     }
@@ -53,7 +53,7 @@ public class OpenMeteoClient implements WeatherClient {
         }
     }
 
-    private Double getTemperature(Coordinates coords) {
+    private double getTemperature(Coordinates coords) {
         String url = String.format(
                 Locale.US,
                 FORECAST_URL,

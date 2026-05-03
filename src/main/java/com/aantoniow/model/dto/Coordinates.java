@@ -1,4 +1,4 @@
 package com.aantoniow.model.dto;
 
-public record Coordinates(Double latitude, Double longitude) {
+public record Coordinates(double latitude, double longitude) {
 };

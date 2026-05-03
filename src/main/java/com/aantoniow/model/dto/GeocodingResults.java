@@ -3,8 +3,8 @@ package com.aantoniow.model.dto;
 public class GeocodingResults {
     String id;
     String name;
-    Double longitude;
-    Double latitude;
+    double longitude;
+    double latitude;
 
     public String getId() {
         return id;
@@ -14,11 +14,11 @@ public class GeocodingResults {
         return name;
     }
 
-    public Double getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public Double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
