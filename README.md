@@ -10,16 +10,17 @@ To use it properly, there needs to be a parameter named `city`
 Example usage:
 
 ```curl https://ojo5rv7bjpocwxmukk7i3nsa4a0gmdbf.lambda-url.eu-north-1.on.aws/?city=Wroclaw```
+Cities from all over can be checked for their temperature!
 
 ## General information
 I'll mainly use java, since I have the most experience with it, despite knowing that in "AWS Lambda" environment it probably doesn't have the best performance (cold start).
 
 I won't be using Spring-Boot, beacuse it would further complicate generated jar and reduce performance, but in pure REST Api model, or some platform I'm accustomed to - I would definitively add it.
 
-I approach this project having in mind all specified Tasks in mind, to reduct time needed for refactoring with each next task.
+I approach this project having all specified Tasks in mind, to reduce time needed for refactoring with each next task.
 
 ### Open-Meteo Client
-I've implemented this client having in mind that Task #2, needs cities as input parameter and Task #4, suggests usage of other weather providers.
+I've implemented this client having in mind that Task #2 needs cities as input parameter, and Task #4 suggests usage of other weather providers.
 To do City-Latitude/Longitude conversion, I've decided to use open-meteo geolocation api, since it was presented almost at the top of documentation 
 (at https://open-meteo.com/en/docs/geocoding-api?name=&count=1#geocoding_search) and it doesn't really complicates that much I think. And will be calling this feature "Geocoding" from now on.
 
@@ -41,23 +42,30 @@ statements, to create expected Response.
 I've decided to anticipate WatherRequest instead of simple String, because in the possible future maybe that request could be expanded and I'm most
 comfortable with controller-service-repository (or client here) pattern structure.
 
-### Tests
+### Tests!
 I've written couple unit tests, to check implementation of WeatherService and Open-Meteo client response parsing and preparing answer.
 Added dependencies to pom.xml won't be impacting performance or created jar file, because they're in "test" scope - meaning, they only are used and
 appear in the testing phase of maven build.
+Unit tests check service business logic and Open-Meteo client response parsing. Because WeatherClient is an interface injected into WeatherService, tests can
+mock it entirely without any real HTTP calls. Similarly, `HttpService` is injected into `OpenMeteoClient`, so client tests mock the HTTP layer and verify only
+deserialisation and URL construction logic. ALl mocking was used with Mockito.
 
 ### AWS handler - WeatherHandler
 I was worried here about constant calls from aws, that would create newer and newer instances. But from I could find in docs, only handlerRequest() method is called, so if I create instances of classes inside constructor I'm safe with single instances. (at https://docs.aws.amazon.com/lambda/latest/dg/java-handler.html#java-handler-setup)
 To build jar file readable by aws lambda, I added dependency to pom.xml specified here:
 "https://docs.aws.amazon.com/lambda/latest/dg/java-package.html#java-package-maven".
 
-### AWS handler + function url - WeatherUrlHandler
+### AWS handler + function url - WeatherUrlHandler - Class specific to fit Task #3
 This class had me struggling the most. I couldn't find any recommendations for simple build online that fit into my application. There was no mention to use Api
 Gateway from AWS inside task, so It didn't feel right to use.
-This handler should fit into Task #3, that should let be callable through URL and parameter.
-I've created WeatherRequestV2, which uses the fact that every request inside URL Function is a json body. I've mapped `queryStringParameters` as a field and let Lambda do serialisation for me. It will only work with specific parameter name.
-There won't be any validations and it will try to handle every HTTP method and not only GET.
-(at https://docs.aws.amazon.com/lambda/latest/dg/urls-invocation.html#urls-payloads AND at https://docs.aws.amazon.com/lambda/latest/dg/urls-invocation.html#urls-invocation-basics)
+This handler should fit into Task #3 it lets the application be accessible through public URL.
+For purposes of handling query parameter, I've created WeatherRequestV2. It takes advantage of the fact that every request inside URL Function is processed into a request payload format (json body!). I've mapped `queryStringParameters` as a field and let Lambda do serialisation for me.
+TRADE-OFFs: 
+- It will only work with specific parameter name.
+- There won't be any validations and it will try to handle every HTTP method: not only GET.
+(Used resources from:
+https://docs.aws.amazon.com/lambda/latest/dg/urls-invocation.html#urls-payloads 
+AND https://docs.aws.amazon.com/lambda/latest/dg/urls-invocation.html#urls-invocation-basics)
 
 
 ### Encountered Problems
@@ -70,7 +78,9 @@ Json. Empty constructor and setter fixed the problem.
 - In prototype that I'm currently working on, my code won't be executed asynchronously! Potentially in future, another HttpService implementation that would
   meet such expectation.
 
-- I'm using jackson version 2.X, with known CVE problem but since this code works as homework it should be sufficient.
+- public "GET" is not validated properly! (I didn't want to use API Gateway)
+
+- I'm using jackson version 2.X, with known CVE problem but given this is a non-production assignment and no sensitive data is processed, it should be sufficient.
 
 ### Open-Meteo usage
 It's using parameter, "current=temperature_2m", as it is mentioned in documentation to return only current weather information, "temperature_2m" means "Air temperature at 2 meters above ground" (at https://open-meteo.com/en/docs?latitude=51.1&longitude=17.0333&forecast_days=1&current=temperature_2m#location_and_time)
