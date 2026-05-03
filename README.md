@@ -3,6 +3,13 @@ This project is being done for recruitment purposes.
 This README.md file is being treated as my informal thoughts and some documentation.
 
 
+# Public URL
+Temperature can be get from URL: `https://ojo5rv7bjpocwxmukk7i3nsa4a0gmdbf.lambda-url.eu-north-1.on.aws`
+
+To use it properly, there needs to be a parameter named `city`
+Example usage:
+`curl https://ojo5rv7bjpocwxmukk7i3nsa4a0gmdbf.lambda-url.eu-north-1.on.aws/?city=Wroclaw`
+
 ## General information
 I'll mainly use java, since I have the most experience with it, despite knowing that in "AWS Lambda" environment it probably doesn't have the best performance (cold start).
 
@@ -42,6 +49,14 @@ appear in the testing phase of maven build.
 I was worried here about constant calls from aws, that would create newer and newer instances. But from I could find in docs, only handlerRequest() method is called, so if I create instances of classes inside constructor I'm safe with single instances. (at https://docs.aws.amazon.com/lambda/latest/dg/java-handler.html#java-handler-setup)
 To build jar file readable by aws lambda, I added dependency to pom.xml specified here:
 "https://docs.aws.amazon.com/lambda/latest/dg/java-package.html#java-package-maven".
+
+### AWS handler + function url - WeatherUrlHandler
+This class had me struggling the most. I couldn't find any recommendations for simple build online that fit into my application. There was no mention to use Api
+Gateway from AWS inside task, so It didn't feel right to use.
+This handler should fit into Task #3, that should let be callable through URL and parameter.
+I've created WeatherRequestV2, which uses the fact that every request inside URL Function is a json body. I've mapped `queryStringParameters` as a field and let Lambda do serialisation for me. It will only work with specific parameter name.
+There won't be any validations and it will try to handle every HTTP method and not only GET.
+(at https://docs.aws.amazon.com/lambda/latest/dg/urls-invocation.html#urls-payloads AND at https://docs.aws.amazon.com/lambda/latest/dg/urls-invocation.html#urls-invocation-basics)
 
 
 ### Encountered Problems
