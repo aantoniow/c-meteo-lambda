@@ -8,7 +8,8 @@ Temperature can be get from URL: `https://ojo5rv7bjpocwxmukk7i3nsa4a0gmdbf.lambd
 
 To use it properly, there needs to be a parameter named `city`
 Example usage:
-`curl https://ojo5rv7bjpocwxmukk7i3nsa4a0gmdbf.lambda-url.eu-north-1.on.aws/?city=Wroclaw`
+
+```curl https://ojo5rv7bjpocwxmukk7i3nsa4a0gmdbf.lambda-url.eu-north-1.on.aws/?city=Wroclaw```
 
 ## General information
 I'll mainly use java, since I have the most experience with it, despite knowing that in "AWS Lambda" environment it probably doesn't have the best performance (cold start).
