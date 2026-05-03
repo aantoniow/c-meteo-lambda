@@ -44,6 +44,11 @@ To build jar file readable by aws lambda, I added dependency to pom.xml specifie
 "https://docs.aws.amazon.com/lambda/latest/dg/java-package.html#java-package-maven".
 
 
+### Encountered Problems
+- First problem was, I've added dependency to the wrong plugin section.
+- Second, that I thought Jackson inside implementation was the same one that would be used - That's not true, AWS does deserialisation on their part for the input
+Json. Empty constructor and setter fixed the problem.
+
 
 ## Attention!
 - In prototype that I'm currently working on, my code won't be executed asynchronously! Potentially in future, another HttpService implementation that would
