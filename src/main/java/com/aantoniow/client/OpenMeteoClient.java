@@ -26,7 +26,7 @@ public class OpenMeteoClient implements WeatherClient {
     }
 
     @Override
-    public Double getCurrentTemperature(String city) throws Exception {
+    public Double getCurrentTemperature(String city) {
         Coordinates coords = getCoordinates(city);
         return getTemperature(coords);
     }
@@ -58,9 +58,8 @@ public class OpenMeteoClient implements WeatherClient {
                 coords.latitude(),
                 coords.longitude());
 
-        OpenMeteoResponse meteo;
         try {
-            meteo = objectMapper.readValue(httpService.get(url), OpenMeteoResponse.class);
+            OpenMeteoResponse meteo = objectMapper.readValue(httpService.get(url), OpenMeteoResponse.class);
             if (meteo.getCurrent() == null) {
                 throw new WeatherClientException("Temperature not found");
             }
