@@ -5,9 +5,13 @@ import com.aantoniow.client.WeatherClient;
 import com.aantoniow.client.service.DefaultHttpService;
 import com.aantoniow.client.service.HttpService;
 import com.aantoniow.config.AppConfig;
+import com.aantoniow.model.WeatherRequest;
+import com.aantoniow.model.WeatherResponse;
 import com.aantoniow.service.WeatherService;
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
 
-public class WeatherHandler {
+public class WeatherHandler implements RequestHandler<WeatherRequest, WeatherResponse> {
 
     private final WeatherService weatherService;
 
@@ -16,5 +20,10 @@ public class WeatherHandler {
         HttpService httpService = new DefaultHttpService(config.getHttpClient());
         WeatherClient weatherClient = new OpenMeteoClient(httpService, config.getObjectMapper());
         this.weatherService = new WeatherService(weatherClient);
+    }
+
+    @Override
+    public WeatherResponse handleRequest(WeatherRequest input, Context context) {
+        return weatherService.getTemperatureAndCategorise(input);
     }
 }

@@ -17,7 +17,7 @@ To do City-Latitude/Longitude conversion, I've decided to use open-meteo geoloca
 
 For purpose of this project, Geocoding was included inside Open-Meteo client, but I've considered that it maybe should behave separately - since a lot of other weather APIs use latitude and longitude as their input mechanism. Also results from this client never change actually, so caching mechanism inside would provide very useful.
 
-I started writing this class with using HttpClient, which is provided by java standard library. But having in mind Task #4 and interface of WeatherClient, it
+I started writing this class with using HttpClient (at https://docs.oracle.com/en/java/javase/21/docs/api/java.net.http/java/net/http/HttpClient.html), which is provided by java standard library. But having in mind Task #4 and interface of WeatherClient, it
 was fitting that I would extract http calls to separate service, which helps in keeping single responsibility in order. Also it should simplify unit testing.
 
 ### AppConfig
@@ -33,11 +33,16 @@ statements, to create expected Response.
 I've decided to anticipate WatherRequest instead of simple String, because in the possible future maybe that request could be expanded and I'm most
 comfortable with controller-service-repository (or client here) pattern structure.
 
-
 ### Tests
 I've written couple unit tests, to check implementation of WeatherService and Open-Meteo client response parsing and preparing answer.
 Added dependencies to pom.xml won't be impacting performance or created jar file, because they're in "test" scope - meaning, they only are used and
 appear in the testing phase of maven build.
+
+### AWS handler - WeatherHandler
+I was worried here about constant calls from aws, that would create newer and newer instances. But from I could find in docs, only handlerRequest() method is called, so if I create instances of classes inside constructor I'm safe with single instances. (at https://docs.aws.amazon.com/lambda/latest/dg/java-handler.html#java-handler-setup)
+To build jar file readable by aws lambda, I added dependency to pom.xml specified here:
+"https://docs.aws.amazon.com/lambda/latest/dg/java-package.html#java-package-maven".
+
 
 
 ## Attention!
