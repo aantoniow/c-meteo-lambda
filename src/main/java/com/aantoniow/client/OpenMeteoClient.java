@@ -48,6 +48,8 @@ public class OpenMeteoClient implements WeatherClient {
             throw new WeatherClientException("City parsing problem", e);
         } catch (JsonProcessingException e) {
             throw new WeatherClientException("City parsing problem", e);
+        } catch (Exception e) {
+            throw new WeatherClientException("Failed to call API", e);
         }
     }
 
@@ -69,6 +71,8 @@ public class OpenMeteoClient implements WeatherClient {
             throw new WeatherClientException("Temperature parsing problem", e);
         } catch (JsonProcessingException e) {
             throw new WeatherClientException("Temperature parsing problem", e);
+        } catch (Exception e) {
+            throw new WeatherClientException("Failed to call API", e);
         }
     }
 

@@ -1,6 +1,8 @@
 package com.aantoniow.client;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.when;
 
@@ -11,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.aantoniow.client.service.HttpException;
 import com.aantoniow.client.service.HttpService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +29,7 @@ class OpenMeteoClientTest {
     @InjectMocks
     private OpenMeteoClient tested;
 
-    private String geocodingValid = """
+    private static final String GEOCODING_VALID = """
             {
               "results": [
                 {
@@ -53,12 +56,12 @@ class OpenMeteoClientTest {
             }
                         """;
 
-    private String geocodingInvalid = """
+    private static final String GEOCODING_INVALID = """
             {
               "generationtime_ms": 0.25713444
             }
                                         """;
-    private String temperatureInvalid = """
+    private static final String TEMPERATURE_INVALID = """
             {
                 "error": true,
                     "reason": "Longitude must be in range of -180 to 180°. Given: 1.012838e+13."
@@ -66,7 +69,7 @@ class OpenMeteoClientTest {
 
             """;
 
-    private String temperatureValid = """
+    private static final String TEMPERATURE_VALID = """
             {
               "latitude": 51.1,
               "longitude": 17.039999,
@@ -92,14 +95,45 @@ class OpenMeteoClientTest {
     void shouldGetTemperatureFromValidCity() {
         // given
         String city = "Wroclaw";
-        when(httpService.get(contains("geocoding"))).thenReturn(geocodingValid);
-        when(httpService.get(contains("forecast"))).thenReturn(temperatureValid);
+        when(httpService.get(contains("geocoding"))).thenReturn(GEOCODING_VALID);
+        when(httpService.get(contains("forecast"))).thenReturn(TEMPERATURE_VALID);
 
         // when
         var response = tested.getCurrentTemperature(city);
 
         // then
         assertEquals(25.8, response);
+    }
+
+    @Test
+    void shouldThrowWhenTemperatureInvalid() {
+        // given
+        String city = "Wroclaw";
+        when(httpService.get(contains("geocoding"))).thenReturn(GEOCODING_VALID);
+        when(httpService.get(contains("forecast"))).thenReturn(TEMPERATURE_INVALID);
+
+        // when / then
+        assertThrowsExactly(WeatherClientException.class, () -> tested.getCurrentTemperature(city));
+    }
+
+    @Test
+    void shouldThrowWhenCoordinatesInvalid() {
+        // given
+        String city = "Wroclaw";
+        when(httpService.get(contains("geocoding"))).thenReturn(GEOCODING_INVALID);
+
+        // when / then
+        assertThrowsExactly(WeatherClientException.class, () -> tested.getCurrentTemperature(city));
+    }
+
+    @Test
+    void shouldThrowWhenHttpServiceThrows() {
+        // given
+        String city = "Wroclaw";
+        when(httpService.get(anyString())).thenThrow(new HttpException("timeout"));
+
+        // when / then
+        assertThrowsExactly(WeatherClientException.class, () -> tested.getCurrentTemperature(city));
     }
 
 }

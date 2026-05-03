@@ -20,10 +20,8 @@ public class DefaultHttpService implements HttpService {
                 .uri(URI.create(url))
                 .GET()
                 .build();
-
-        HttpResponse<String> response;
         try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
                 throw new HttpException("Geocoding failed: " + response.statusCode());
             }
