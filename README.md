@@ -12,7 +12,7 @@ Example usage:
 ```curl https://ojo5rv7bjpocwxmukk7i3nsa4a0gmdbf.lambda-url.eu-north-1.on.aws/?city=Wroclaw```
 Cities from all over can be checked for their temperature!
 
-#AWS Lambda
+# AWS Lambda
 To use this inside lambda, application needs to be build and packaged by:
 `mvn clean package`
 this command will generate jar file ready to upload to AWS Lambda.
