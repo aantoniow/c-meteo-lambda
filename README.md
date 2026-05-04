@@ -12,6 +12,9 @@ Example usage:
 ```curl https://ojo5rv7bjpocwxmukk7i3nsa4a0gmdbf.lambda-url.eu-north-1.on.aws/?city=Wroclaw```
 Cities from all over can be checked for their temperature!
 
+# Images
+Images required from task description can be found inside images/ directory. 
+
 ## General information
 I'll mainly use java, since I have the most experience with it, despite knowing that in "AWS Lambda" environment it probably doesn't have the best performance (cold start).
 
