@@ -63,7 +63,7 @@ Added dependencies to pom.xml won't be impacting performance or created jar file
 appear in the testing phase of maven build.
 Unit tests check service business logic and Open-Meteo client response parsing. Because WeatherClient is an interface injected into WeatherService, tests can
 mock it entirely without any real HTTP calls. Similarly, `HttpService` is injected into `OpenMeteoClient`, so client tests mock the HTTP layer and verify only
-deserialisation and URL construction logic. ALl mocking was used with Mockito.
+deserialisation and URL construction logic. All mocking was used with Mockito.
 
 ### AWS handler - WeatherHandler
 I was worried here about constant calls from aws, that would create newer and newer instances. But from I could find in docs, only handlerRequest() method is called, so if I create instances of classes inside constructor I'm safe with single instances. (at https://docs.aws.amazon.com/lambda/latest/dg/java-handler.html#java-handler-setup)
