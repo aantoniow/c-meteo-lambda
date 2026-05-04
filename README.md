@@ -24,6 +24,10 @@ Also URL needs to be generated.
 Images required from task description can be found inside images/ directory. 
 
 ## General information
+Project uses:
+- java 21
+- maven
+
 I'll mainly use java, since I have the most experience with it, despite knowing that in "AWS Lambda" environment it probably doesn't have the best performance (cold start).
 
 I won't be using Spring-Boot, beacuse it would further complicate generated jar and reduce performance, but in pure REST Api model, or some platform I'm accustomed to - I would definitively add it.
