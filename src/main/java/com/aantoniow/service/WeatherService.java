@@ -14,23 +14,28 @@ public class WeatherService {
     }
 
     public WeatherResponse getTemperatureAndCategorise(WeatherRequest request) {
-        if (request.getCity() == null || request.getCity().isBlank()) {
-            throw new WeatherServiceException("No valid city provided!");
-        }
         String city = request.getCity();
-        double temp = weatherClient.getCurrentTemperature(city);
-        String category = categoriseTemp(temp);
-        return new WeatherResponse(temp, category);
+        validateCity(city);
+        return process(city);
     }
 
     public WeatherResponse getTemperatureAndCategorise(WeatherRequestV2 request) {
         String city = request.getCityFromRequest();
+        validateCity(city);
+        return process(city);
+    }
+
+    private void validateCity(String city) {
         if (city == null || city.isBlank()) {
             throw new WeatherServiceException("No valid city provided!");
         }
+    }
+
+    private WeatherResponse process(String city) {
         double temp = weatherClient.getCurrentTemperature(city);
         String category = categoriseTemp(temp);
         return new WeatherResponse(temp, category);
+
     }
 
     private String categoriseTemp(double temp) {
