@@ -16,9 +16,12 @@ Cities from all over can be checked for their temperature!
 To use this inside lambda, application needs to be build and packaged by:
 `mvn clean package`
 this command will generate jar file ready to upload to AWS Lambda.
-To work as public url, WeatherUrlHandler needs to be mapped with
+To work as public url (with url parameter), WeatherUrlHandler needs to be mapped inside AWS console with
 `com.aantoniow.handler.WeatherUrlHandler::handleRequest`. 
 Also URL needs to be generated.
+
+To work with json as input, WeatherHandler needs to be mapped inside AWS console with
+`com.aantoniow.handler.WeatherHandler::handleRequest`. 
 
 # Images
 Images required from task description can be found inside images/ directory. 
