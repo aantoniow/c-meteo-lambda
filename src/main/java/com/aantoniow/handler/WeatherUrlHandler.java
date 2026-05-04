@@ -16,7 +16,7 @@ public class WeatherUrlHandler implements RequestHandler<WeatherRequestV2, Weath
     private final WeatherService weatherService;
 
     public WeatherUrlHandler() {
-        AppConfig config = new AppConfig();
+        AppConfig config = AppConfig.getInstance();
         HttpService httpService = new DefaultHttpService(config.getHttpClient());
         WeatherClient weatherClient = new OpenMeteoClient(httpService, config.getObjectMapper());
         this.weatherService = new WeatherService(weatherClient);
